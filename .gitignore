@@ -1,0 +1,14 @@
+# Ignore all Python scripts
+*.py
+
+# Ignore text files
+*.txt
+
+# Ignore specific folders
+raw?html/ 
+
+# Ignore system files (optional but recommended)
+.DS_Store
+Thumbs.db
+
+search_index.json 

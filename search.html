@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Search - Kitab al-Athar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Search Archive</h1>
+        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    </header>
+
+    <div class="container">
+        <nav class="sub-nav">
+            <a href="index.html" class="nav-btn">← Home</a>
+        </nav>
+
+        <input type="text" id="searchInput" placeholder="Search by title or keyword..." 
+               style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 2rem; font-size: 1.1rem; background: var(--card-bg); color: var(--text);">
+
+        <div id="results" class="section-list"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let searchIndex = [];
+
+        // Load the index
+        fetch('search_index.json')
+            .then(response => response.json())
+            .then(data => { searchIndex = data; });
+
+        const input = document.getElementById('searchInput');
+        const resultsDiv = document.getElementById('results');
+
+        input.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            resultsDiv.innerHTML = '';
+
+            if (term.length < 2) return;
+
+            const filtered = searchIndex.filter(item => 
+                item.title.toLowerCase().includes(term) || 
+                item.content.toLowerCase().includes(term)
+            );
+
+            filtered.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'section-item';
+                div.innerHTML = `<a href="${item.url}">
+                    <div style="font-weight:bold">${item.title}</div>
+                    <div style="font-size:0.8rem; opacity:0.7">${item.content.substring(0, 100)}...</div>
+                </a>`;
+                resultsDiv.appendChild(div);
+            });
+        });
+    </script>
+</body>
+</html>

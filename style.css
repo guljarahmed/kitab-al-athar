@@ -1,0 +1,147 @@
+/* --- 1. THEME VARIABLES --- */
+:root {
+    --bg: #f8f7ef;
+    --text: #333333;
+    --accent: #4a5d23;
+    --card-bg: #ffffff;
+    --border: #dddddd;
+    --header-text: #ffffff;
+}
+
+body.dark-mode {
+    --bg: #1a1a1a;
+    --text: #e0e0e0;
+    --accent: #b4cc7d; 
+    --card-bg: #2d2d2d;
+    --border: #444444;
+}
+
+/* --- 2. CORE LAYOUT --- */
+body { 
+    font-family: 'Inter', sans-serif; 
+    background-color: var(--bg); 
+    color: var(--text); 
+    line-height: 1.8; 
+    margin: 0; 
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+
+header {
+    background-color: var(--accent);
+    color: var(--header-text);
+    padding: 0.7rem 0;
+    text-align: center;
+    position: relative;
+}
+
+.theme-toggle {
+    position: absolute;
+    top: 50%;
+    right: 1.5rem;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    padding: 2px 8px;
+    cursor: pointer;
+}
+
+/* --- 3. MAIN CONTENT CARDS --- */
+.content p, .body-text, .noindenta { 
+    background-color: var(--card-bg) !important; 
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+    padding: 1.2rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+/* --- 4. FOOTNOTE CARDS (THE FIX) --- */
+/* This section rebuilds the numbers you see missing in your screenshot */
+
+.footnotes ol {
+    list-style: none !important; 
+    padding: 0 !important;
+    counter-reset: fn-counter; /* Creates a new counter */
+}
+
+.fnt, .fn {
+    background-color: var(--card-bg) !important; 
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+    padding: 1.2rem 1.2rem 1.2rem 3.5rem !important; /* Spacing for the number */
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    display: block;
+    position: relative; /* REQUIRED for the absolute number positioning */
+    counter-increment: fn-counter; /* Adds 1 to the count for each card */
+}
+
+/* This injects the "1.", "2." etc. back into the box */
+.fnt::before, .fn::before {
+    content: counter(fn-counter) ".";
+    position: absolute;
+    left: 1.2rem;
+    top: 1.2rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+/* --- 5. INDEX & NAVIGATION --- */
+.section-list { list-style: none !important; padding: 0 !important; }
+.section-item { margin-bottom: 1rem; }
+.section-item a {
+    display: block !important;
+    background-color: var(--card-bg) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+    padding: 1.2rem;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.sub-nav {
+    display: flex;
+    justify-content: space-between;
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 2rem;
+}
+
+.nav-btn { text-decoration: none; color: var(--accent) !important; font-weight: 700; }
+
+/* --- 6. FOOTNOTE SUPERSCRIPTS --- */
+sup { vertical-align: baseline; font-size: inherit; line-height: 0; }
+a[href^="#fn-"] {
+    display: inline-block;
+    font-size: 0.75rem !important; 
+    vertical-align: super !important; 
+    font-weight: 700 !important;
+    color: var(--accent) !important;
+}
+
+/* --- 7. ALIGNMENT & IMAGES --- */
+p.body-text, p.noindenta, p.imagea, p.imageb { text-align: center; }
+.arabic-header-block { max-width: 100%; height: auto; }
+
+/* Fix for the footnote return arrow (the "blue thingy") */
+.fnt a, .fn a {
+    color: var(--accent) !important;
+    text-decoration: none !important;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-left: 5px;
+    transition: opacity 0.2s;
+}
+
+.fnt a:hover, .fn a:hover {
+    opacity: 0.7;
+}
+p.imagea1 {
+  text-align: center
+  
+}
