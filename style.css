@@ -737,7 +737,7 @@ ol li a:hover {
 /* === 21. RESPONSIVE === */
 @media (max-width: 600px) {
     .container { padding: 0 1rem; }
-    header { padding: 0.8rem 3rem 0.8rem 1rem; }
+    header { padding: 0.8rem 3.5rem; }
     header h1 { font-size: 0.9rem; letter-spacing: 0.5px; }
     header p { font-size: 0.7rem; }
 
