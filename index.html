@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Dar al-Hanafiyya - Home</title>
+    <title>Dar al-Hanafiyya - A Digital Library of Hanafi Fiqh</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -11,51 +11,31 @@
     <header>
         <h1>Dar al-Hanafiyya</h1>
         <p>A Digital Library of Hanafi Fiqh</p>
-        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
     </header>
 
-    <div class="container" style="text-align: center; padding: 4rem 1rem;">
-        <h2 style="color: var(--accent); margin-bottom: 1.5rem;">Welcome to the Digital Library</h2>
-        <p style="max-width: 600px; margin: 0 auto 2.5rem; font-size: 1.1rem; color: var(--text); opacity: 0.8;">
-            Explore Kitab al-Athar — the complete collection of 300+ sections across 20 chapters,
-            fully preserved with original Arabic headers and detailed footnotes.
+    <div class="container" style="text-align: center; padding-top: 3rem;">
+        <h2 style="color: var(--accent); margin-bottom: 0.5rem;">Welcome to the Library</h2>
+        <p style="max-width: 600px; margin: 0 auto 2.5rem; font-size: 1rem; color: var(--text); opacity: 0.7;">
+            Explore our growing collection of classical Hanafi fiqh texts, fully preserved with original Arabic headers and detailed footnotes.
         </p>
-        
-        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-            <a href="chapters.html" class="cta-button primary">
-                Start Reading →
+
+        <div class="book-grid">
+            <a class="book-card" href="chapters.html">
+                <h3>Kitab al-Athar</h3>
+                <p>The Narrations of Imam Abu Hanifah, compiled by Imam Muhammad ibn al-Hasan ash-Shaybani.</p>
+                <div class="book-meta">20 chapters &middot; 300+ sections</div>
             </a>
-            <a href="search.html" class="cta-button secondary">
-                🔍 Search Archive
+
+            <!-- Future books go here as new book-card elements -->
+            <!--
+            <a class="book-card" href="book2_chapters.html">
+                <h3>Book Title</h3>
+                <p>Description of the book.</p>
+                <div class="book-meta">X chapters &middot; Y sections</div>
             </a>
+            -->
         </div>
     </div>
-
-    <style>
-        .cta-button {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            border: 2px solid var(--accent);
-        }
-        .cta-button.primary {
-            background: var(--accent);
-            color: white;
-        }
-        .cta-button.secondary {
-            background: transparent;
-            color: var(--accent);
-        }
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-            opacity: 0.9;
-        }
-    </style>
 
     <script src="script.js"></script>
 </body>
