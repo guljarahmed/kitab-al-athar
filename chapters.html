@@ -11,6 +11,7 @@
     <header>
         <h1>Kitab al-Athar</h1>
         <p>Table of Contents: Chapters</p>
+        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
     </header>
 
     <div class="container">
@@ -47,7 +48,7 @@
 
     <style>
         .chapter-card {
-            background: white;
+            background: var(--card-bg);
             padding: 1.5rem;
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -64,5 +65,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
     </style>
+
+    <script src="script.js"></script>
 </body>
 </html>
