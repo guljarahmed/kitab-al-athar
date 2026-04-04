@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for f:*)",
+      "Bash(do grep:*)",
+      "Bash(done)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(where python:*)",
+      "Bash(ls /c/Python*/python.exe /c/Users/*/AppData/Local/Programs/Python/*/python.exe)",
+      "Bash(command -v py)",
+      "Bash(py -c \":*)",
+      "Bash(gh pr:*)",
+      "Bash(where gh:*)",
+      "Read(//c/Program Files/GitHub CLI/**)",
+      "Read(//c/Program Files \\(x86\\)/GitHub CLI/**)",
+      "Read(//y/newSite3Test/.claude/worktrees/goofy-kirch/$LOCALAPPDATA/Programs/GitHub CLI/**)",
+      "Read(//c/Users/GULJAR/**)",
+      "Bash(\"/c/Program Files/GitHub:*)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/guljarahmed/kitab-al-athar/commits/main --jq '.sha[:7] + \"\" \"\" + .commit.message')",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/guljarahmed/kitab-al-athar/commits/claude/goofy-kirch --jq '.sha[:7] + \"\" \"\" + .commit.message')",
+      "Bash(cp \"Y:/newSite3Test/.claude/worktrees/goofy-kirch/logo-preview.html\" \"Y:/newSite3Test/logo-preview.html\")",
+      "Bash(cp \"Y:/newSite3Test/.claude/worktrees/goofy-kirch/logo-3a.svg\" \"Y:/newSite3Test/logo-3a.svg\")",
+      "Bash(cp \"Y:/newSite3Test/.claude/worktrees/goofy-kirch/logo-3b.svg\" \"Y:/newSite3Test/logo-3b.svg\")",
+      "Bash(cp \"Y:/newSite3Test/.claude/worktrees/goofy-kirch/logo-3c.svg\" \"Y:/newSite3Test/logo-3c.svg\")",
+      "Bash(cp \"Y:/newSite3Test/.claude/worktrees/goofy-kirch/logo-3d.svg\" \"Y:/newSite3Test/logo-3d.svg\")",
+      "Bash(cp \"Y:/newSite3Test/.claude/worktrees/goofy-kirch/style.css\" \"Y:/newSite3Test/style.css\")",
+      "Bash(cp \"Y:/newSite3Test/.claude/worktrees/goofy-kirch/script.js\" \"Y:/newSite3Test/script.js\")",
+      "Bash(cp \"Y:/newSite3Test/.claude/worktrees/goofy-kirch/index.html\" \"Y:/newSite3Test/index.html\")",
+      "Bash(cp \"Y:/newSite3Test/.claude/worktrees/goofy-kirch/chapters.html\" \"Y:/newSite3Test/chapters.html\")",
+      "Bash(cp \"Y:/newSite3Test/.claude/worktrees/goofy-kirch/logo.svg\" \"Y:/newSite3Test/logo.svg\")",
+      "WebFetch(domain:fmhy.net)"
+    ]
+  }
+}

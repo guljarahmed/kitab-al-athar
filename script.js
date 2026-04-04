@@ -1,25 +1,112 @@
 // =============================================
-// 1. THEME: Apply saved theme immediately
+// 1. THEMES: Define and apply immediately
 // =============================================
+var THEMES = [
+    { id: 'light',  name: 'Light',  swatch: '#f8f7ef' },
+    { id: 'dark',   name: 'Dark',   swatch: '#1a1a2e' },
+    { id: 'sepia',  name: 'Sepia',  swatch: '#f4ecd8' },
+    { id: 'forest', name: 'Forest', swatch: '#1a2e1a' },
+    { id: 'ocean',  name: 'Ocean',  swatch: '#f0f5fa' }
+];
+
 (function() {
-    if (localStorage.getItem('theme') === 'dark') {
-        document.body.classList.add('dark-mode');
+    var saved = localStorage.getItem('theme') || 'light';
+    // Migrate old dark-mode value
+    if (saved === 'dark' || localStorage.getItem('theme') === 'dark') {
+        saved = 'dark';
+    }
+    if (saved !== 'light') {
+        document.body.classList.add('theme-' + saved);
     }
 })();
 
-function toggleTheme() {
-    var isDark = document.body.classList.toggle('dark-mode');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    updateToggleIcon(isDark);
+function setTheme(themeId) {
+    // Remove all theme classes
+    THEMES.forEach(function(t) {
+        document.body.classList.remove('theme-' + t.id);
+    });
+    // Also remove legacy dark-mode class
+    document.body.classList.remove('dark-mode');
+    // Apply new theme
+    if (themeId !== 'light') {
+        document.body.classList.add('theme-' + themeId);
+    }
+    localStorage.setItem('theme', themeId);
+    // Update all theme UI elements
+    updateThemeUI(themeId);
 }
 
-function updateToggleIcon(isDark) {
-    var btn = document.querySelector('.theme-toggle');
-    if (btn) btn.innerHTML = isDark ? '&#9788;' : '&#9790;';
+function getCurrentTheme() {
+    for (var i = 0; i < THEMES.length; i++) {
+        if (document.body.classList.contains('theme-' + THEMES[i].id)) {
+            return THEMES[i].id;
+        }
+    }
+    return 'light';
+}
+
+function updateThemeUI(themeId) {
+    // Update desktop dropdown selections
+    var options = document.querySelectorAll('.theme-option');
+    for (var i = 0; i < options.length; i++) {
+        options[i].classList.toggle('selected', options[i].getAttribute('data-theme') === themeId);
+    }
+    // Update sidebar swatches
+    var swatches = document.querySelectorAll('.sidebar-theme-swatch');
+    for (var i = 0; i < swatches.length; i++) {
+        swatches[i].classList.toggle('selected', swatches[i].getAttribute('data-theme') === themeId);
+    }
+}
+
+// Legacy compat
+function toggleTheme() {
+    setTheme(getCurrentTheme() === 'dark' ? 'light' : 'dark');
+}
+function updateToggleIcon() {}
+
+// =============================================
+// 2. BOOKS: Registry for multi-book support
+// =============================================
+var BOOKS = [
+    {
+        id: 'kitab-al-athar',
+        title: 'Kitab al-Athar',
+        subtitle: 'The Narrations of Imam Abu Hanifah',
+        chaptersPage: 'chapters.html',
+        chapters: 20,
+        sections: '300+',
+        // Path patterns that identify pages belonging to this book
+        pathPatterns: ['finished_sections', 'ch']
+    }
+    // Add more books here:
+    // {
+    //     id: 'another-book',
+    //     title: 'Another Book Title',
+    //     subtitle: 'Description',
+    //     chaptersPage: 'book2_chapters.html',
+    //     chapters: 10,
+    //     sections: '100+',
+    //     pathPatterns: ['book2_sections']
+    // }
+];
+
+function detectCurrentBook() {
+    var path = window.location.pathname;
+    var page = path.split('/').pop() || '';
+    // Landing page is not a book page
+    if (page === 'index.html' && path.indexOf('finished_sections') === -1) return null;
+    for (var i = 0; i < BOOKS.length; i++) {
+        for (var j = 0; j < BOOKS[i].pathPatterns.length; j++) {
+            if (path.indexOf(BOOKS[i].pathPatterns[j]) !== -1 || page.indexOf(BOOKS[i].pathPatterns[j]) !== -1) {
+                return BOOKS[i];
+            }
+        }
+    }
+    return null;
 }
 
 // =============================================
-// 2. DOM READY: All features that need the DOM
+// 3. DOM READY: All features that need the DOM
 // =============================================
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -54,10 +141,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (header) {
         var path = window.location.pathname;
         var prefix = (path.indexOf('finished_sections') !== -1) ? '../' : '';
+        var currentPage = path.split('/').pop() || 'index.html';
+        var currentBook = detectCurrentBook();
 
         // Wrap existing h1 (and optional p) in a brand container
-        var brand = document.createElement('div');
+        var brand = document.createElement('a');
         brand.className = 'header-brand';
+        brand.href = prefix + 'index.html';
 
         var logo = document.createElement('img');
         logo.className = 'header-logo';
@@ -69,16 +159,15 @@ document.addEventListener('DOMContentLoaded', function() {
         var h1 = header.querySelector('h1');
         var subtitle = header.querySelector('p');
 
-        // Strip "Section N:" or "Chapter N:" prefix — brand should always just say "Dar al-Hanafiyya"
+        // Brand always shows site name
         if (h1) {
-            var cleanTitle = h1.textContent.replace(/^(Section|Chapter)\s+\d+:\s*/i, '');
-            h1.textContent = cleanTitle;
+            h1.textContent = 'Dar al-Hanafiyya';
             titleWrap.appendChild(h1);
         }
         if (subtitle) titleWrap.appendChild(subtitle);
         brand.appendChild(titleWrap);
 
-        // Remove old theme toggle button from HTML (we'll recreate it)
+        // Remove old theme toggle button from HTML
         var oldToggle = header.querySelector('.theme-toggle');
         if (oldToggle) oldToggle.remove();
 
@@ -86,22 +175,21 @@ document.addEventListener('DOMContentLoaded', function() {
         header.innerHTML = '';
         header.appendChild(brand);
 
-        // Desktop nav links — all unified style
+        // Desktop nav links
         var nav = document.createElement('nav');
         nav.className = 'header-nav';
 
-        var currentPage = window.location.pathname.split('/').pop() || 'index.html';
-        var hasChapters = true; // Chapters link is always present
+        // Chapters link — context-aware for current book
+        if (currentBook) {
+            var chaptersLink = document.createElement('a');
+            chaptersLink.className = 'header-nav-link';
+            chaptersLink.href = prefix + currentBook.chaptersPage;
+            chaptersLink.textContent = 'Chapters';
+            if (currentPage === currentBook.chaptersPage) chaptersLink.classList.add('active');
+            nav.appendChild(chaptersLink);
+        }
 
-        // Chapters link
-        var chaptersLink = document.createElement('a');
-        chaptersLink.className = 'header-nav-link';
-        chaptersLink.href = prefix + 'chapters.html';
-        chaptersLink.textContent = 'Chapters';
-        if (currentPage === 'chapters.html') chaptersLink.classList.add('active');
-        nav.appendChild(chaptersLink);
-
-        // Add prev/next from .sub-nav (skip Home, Chapters, Up since Chapters covers it)
+        // Add prev/next from .sub-nav (skip Home, Chapters, Up)
         var subNavBtns = document.querySelectorAll('.sub-nav .nav-btn');
         for (var i = 0; i < subNavBtns.length; i++) {
             var text = subNavBtns[i].textContent.replace('←', '').replace('→', '').trim();
@@ -113,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
             nav.appendChild(link);
         }
 
-        // Search button (styled as nav link)
+        // Search
         var searchBtn = document.createElement('button');
         searchBtn.className = 'header-nav-link';
         searchBtn.textContent = 'Search';
@@ -121,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
         searchBtn.addEventListener('click', function() { openSearch(); });
         nav.appendChild(searchBtn);
 
-        // Feedback button (styled as nav link)
+        // Feedback
         var feedbackBtn = document.createElement('button');
         feedbackBtn.className = 'header-nav-link';
         feedbackBtn.textContent = 'Feedback';
@@ -137,11 +225,43 @@ document.addEventListener('DOMContentLoaded', function() {
             nav.appendChild(homeLink);
         }
 
-        // Theme toggle — far right, icon only
-        var themeBtn = document.createElement('button');
-        themeBtn.className = 'header-nav-link theme-toggle';
-        themeBtn.onclick = toggleTheme;
-        nav.appendChild(themeBtn);
+        // Theme picker — far right
+        var pickerWrap = document.createElement('div');
+        pickerWrap.className = 'theme-picker-wrap';
+
+        var pickerBtn = document.createElement('button');
+        pickerBtn.className = 'theme-picker-btn';
+        pickerBtn.innerHTML = '&#9790;';
+        pickerBtn.title = 'Change theme';
+        pickerBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var dd = document.querySelector('.theme-dropdown');
+            if (dd) dd.classList.toggle('active');
+        });
+        pickerWrap.appendChild(pickerBtn);
+
+        var dropdown = document.createElement('div');
+        dropdown.className = 'theme-dropdown';
+        var currentTheme = getCurrentTheme();
+        THEMES.forEach(function(t) {
+            var opt = document.createElement('button');
+            opt.className = 'theme-option' + (t.id === currentTheme ? ' selected' : '');
+            opt.setAttribute('data-theme', t.id);
+            opt.innerHTML = '<span class="theme-swatch" style="background:' + t.swatch + '"></span>' + t.name;
+            opt.addEventListener('click', function() {
+                setTheme(t.id);
+                dropdown.classList.remove('active');
+            });
+            dropdown.appendChild(opt);
+        });
+        pickerWrap.appendChild(dropdown);
+        nav.appendChild(pickerWrap);
+
+        // Close dropdown when clicking elsewhere
+        document.addEventListener('click', function() {
+            var dd = document.querySelector('.theme-dropdown');
+            if (dd) dd.classList.remove('active');
+        });
 
         header.appendChild(nav);
 
@@ -152,31 +272,27 @@ document.addEventListener('DOMContentLoaded', function() {
         hamburger.title = 'Menu';
         hamburger.addEventListener('click', function() { openSidebar(); });
         header.appendChild(hamburger);
-
-        // Sync theme icon now that button exists
-        updateToggleIcon(document.body.classList.contains('dark-mode'));
     }
 
     // --- Keyboard navigation ---
     document.addEventListener('keydown', function(e) {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
 
-        // Ctrl+K / Cmd+K => search
         if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
             e.preventDefault();
             openSearch();
             return;
         }
 
-        // Escape => close modals
         if (e.key === 'Escape') {
             closeSearch();
             closeFeedback();
             closeSidebar();
+            var dd = document.querySelector('.theme-dropdown');
+            if (dd) dd.classList.remove('active');
             return;
         }
 
-        // Arrow keys => prev/next navigation
         var navBtns = document.querySelectorAll('.nav-btn');
         if (e.key === 'ArrowLeft') {
             for (var i = 0; i < navBtns.length; i++) {
@@ -200,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // =============================================
-// 3. SEARCH SYSTEM
+// 4. SEARCH SYSTEM
 // =============================================
 var searchOverlay, searchInput, searchResults;
 var searchData = null;
@@ -232,14 +348,12 @@ function createSearchUI() {
 function loadSearchIndex() {
     if (searchData) return Promise.resolve(searchData);
 
-    // Determine base path (are we in a subdirectory?)
     var path = window.location.pathname;
     var prefix = (path.indexOf('finished_sections') !== -1) ? '../' : '';
 
     return fetch(prefix + 'search_index.json')
         .then(function(r) { return r.json(); })
         .then(function(data) {
-            // Fix URLs if we're in a subdirectory
             if (prefix) {
                 data.forEach(function(d) { d.href = prefix + d.url; });
             } else {
@@ -286,7 +400,7 @@ function openSearch() {
     searchInput.value = '';
     searchResults.innerHTML = '';
     searchInput.focus();
-    loadSearchIndex(); // pre-fetch
+    loadSearchIndex();
 }
 
 function closeSearch() {
@@ -294,7 +408,7 @@ function closeSearch() {
 }
 
 // =============================================
-// 4. FEEDBACK SYSTEM
+// 5. FEEDBACK SYSTEM
 // =============================================
 var feedbackOverlay;
 
@@ -327,7 +441,6 @@ function createFeedbackUI() {
         if (e.target === feedbackOverlay) closeFeedback();
     });
 
-    // Handle form submission via mailto fallback
     document.getElementById('feedback-form').addEventListener('submit', function(e) {
         e.preventDefault();
         var form = e.target;
@@ -346,7 +459,6 @@ function createFeedbackUI() {
 
         window.location.href = 'mailto:feedback@daralhanafiyya.com?subject=' + subject + '&body=' + body;
 
-        // Show confirmation
         form.innerHTML = '<div style="text-align:center;padding:2rem 0;">' +
             '<div style="font-size:2rem;margin-bottom:0.5rem;">&#10003;</div>' +
             '<p style="margin:0;font-weight:700;background:none!important;border:none!important;box-shadow:none!important;">Thank you for your feedback!</p>' +
@@ -367,7 +479,7 @@ function closeFeedback() {
 }
 
 // =============================================
-// 5. MOBILE SIDEBAR
+// 6. MOBILE SIDEBAR
 // =============================================
 var sidebarOverlay, sidebar;
 
@@ -379,18 +491,36 @@ function createSidebar() {
     sidebar = document.createElement('div');
     sidebar.id = 'sidebar';
 
-    var isDark = document.body.classList.contains('dark-mode');
+    var currentTheme = getCurrentTheme();
+    var path = window.location.pathname;
+    var prefix = (path.indexOf('finished_sections') !== -1) ? '../' : '';
+    var currentBook = detectCurrentBook();
 
-    // Build navigation links from the existing .sub-nav
+    // Build navigation links
     var navHtml = '';
+
+    // Home link
+    navHtml += '<a class="sidebar-item" href="' + prefix + 'index.html">' +
+        '<span class="sidebar-icon">&#127968;</span>' +
+        '<span class="sidebar-label">Home</span>' +
+    '</a>';
+
+    // Chapters link (context-aware)
+    if (currentBook) {
+        navHtml += '<a class="sidebar-item" href="' + prefix + currentBook.chaptersPage + '">' +
+            '<span class="sidebar-icon">&#128218;</span>' +
+            '<span class="sidebar-label">Chapters</span>' +
+        '</a>';
+    }
+
+    // Prev/Next/Up from sub-nav
     var navBtns = document.querySelectorAll('.sub-nav .nav-btn');
     for (var i = 0; i < navBtns.length; i++) {
         var href = navBtns[i].getAttribute('href');
         var label = navBtns[i].textContent.replace('←', '').replace('→', '').trim();
-        var icon = '&#128279;'; // link icon default
-        if (label === 'Home') icon = '&#127968;';
-        else if (label === 'Chapters') icon = '&#128218;';
-        else if (label === 'Up') icon = '&#11014;&#65039;';
+        if (label === 'Home' || label === 'Chapters') continue;
+        var icon = '&#128279;';
+        if (label === 'Up') icon = '&#11014;&#65039;';
         else if (label.indexOf('Prev') !== -1) icon = '&#9664;';
         else if (label.indexOf('Next') !== -1) icon = '&#9654;';
         navHtml += '<a class="sidebar-item" href="' + href + '">' +
@@ -398,6 +528,15 @@ function createSidebar() {
             '<span class="sidebar-label">' + label + '</span>' +
         '</a>';
     }
+
+    // Theme swatches
+    var themeSwatchesHtml = '';
+    THEMES.forEach(function(t) {
+        themeSwatchesHtml += '<button class="sidebar-theme-swatch' +
+            (t.id === currentTheme ? ' selected' : '') +
+            '" data-theme="' + t.id + '" title="' + t.name + '" style="background:' + t.swatch + '"' +
+            ' onclick="setTheme(\'' + t.id + '\')"></button>';
+    });
 
     sidebar.innerHTML =
         '<div class="sidebar-header">' +
@@ -412,14 +551,13 @@ function createSidebar() {
                 '<span class="sidebar-label">Search</span>' +
                 '<span class="sidebar-hint">Ctrl+K</span>' +
             '</button>' +
-            '<button class="sidebar-item" id="sidebar-theme-btn" onclick="toggleTheme(); updateSidebarTheme();">' +
-                '<span class="sidebar-icon" id="sidebar-theme-icon">' + (isDark ? '&#9728;&#65039;' : '&#127769;') + '</span>' +
-                '<span class="sidebar-label" id="sidebar-theme-label">' + (isDark ? 'Light Mode' : 'Dark Mode') + '</span>' +
-            '</button>' +
             '<button class="sidebar-item" onclick="closeSidebar(); openFeedback();">' +
                 '<span class="sidebar-icon">&#9993;</span>' +
                 '<span class="sidebar-label">Send Feedback</span>' +
             '</button>' +
+            '<div class="sidebar-divider"></div>' +
+            '<div class="sidebar-theme-label">Theme</div>' +
+            '<div class="sidebar-themes">' + themeSwatchesHtml + '</div>' +
         '</div>';
 
     document.body.appendChild(sidebar);
@@ -429,17 +567,14 @@ function createSidebar() {
     });
 }
 
-function updateSidebarTheme() {
-    var isDark = document.body.classList.contains('dark-mode');
-    var icon = document.getElementById('sidebar-theme-icon');
-    var label = document.getElementById('sidebar-theme-label');
-    if (icon) icon.innerHTML = isDark ? '&#9728;&#65039;' : '&#127769;';
-    if (label) label.textContent = isDark ? 'Light Mode' : 'Dark Mode';
-}
-
 function openSidebar() {
     if (!sidebar) createSidebar();
-    updateSidebarTheme();
+    // Refresh swatch selections
+    var currentTheme = getCurrentTheme();
+    var swatches = sidebar.querySelectorAll('.sidebar-theme-swatch');
+    for (var i = 0; i < swatches.length; i++) {
+        swatches[i].classList.toggle('selected', swatches[i].getAttribute('data-theme') === currentTheme);
+    }
     sidebarOverlay.classList.add('active');
     sidebar.classList.add('active');
 }

@@ -1,4 +1,5 @@
 /* === 1. THEME VARIABLES === */
+/* Light (default) */
 :root {
     --bg: #f8f7ef;
     --text: #333333;
@@ -6,6 +7,8 @@
     --accent-light: rgba(74, 93, 35, 0.08);
     --card-bg: #ffffff;
     --border: #e2e2e2;
+    --header-from: #4a5d23;
+    --header-to: #3a4d18;
     --header-text: #ffffff;
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
     --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
@@ -14,16 +17,64 @@
     --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-body.dark-mode {
+/* Dark */
+body.theme-dark {
     --bg: #1a1a2e;
     --text: #e0e0e0;
     --accent: #a3c45a;
     --accent-light: rgba(163, 196, 90, 0.1);
     --card-bg: #16213e;
     --border: #2a3a5c;
+    --header-from: #1e3a0e;
+    --header-to: #16213e;
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
     --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
     --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* Sepia */
+body.theme-sepia {
+    --bg: #f4ecd8;
+    --text: #5b4636;
+    --accent: #8b6914;
+    --accent-light: rgba(139, 105, 20, 0.08);
+    --card-bg: #faf5e8;
+    --border: #d9cdb5;
+    --header-from: #8b6914;
+    --header-to: #6b4f0a;
+    --shadow-sm: 0 1px 3px rgba(91,70,54,0.08);
+    --shadow-md: 0 4px 12px rgba(91,70,54,0.1);
+    --shadow-lg: 0 8px 24px rgba(91,70,54,0.14);
+}
+
+/* Forest */
+body.theme-forest {
+    --bg: #1a2e1a;
+    --text: #d4e8d4;
+    --accent: #7fb069;
+    --accent-light: rgba(127, 176, 105, 0.1);
+    --card-bg: #243524;
+    --border: #3a5c3a;
+    --header-from: #2d5a1e;
+    --header-to: #1a3a12;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* Ocean */
+body.theme-ocean {
+    --bg: #f0f5fa;
+    --text: #2c3e50;
+    --accent: #2980b9;
+    --accent-light: rgba(41, 128, 185, 0.08);
+    --card-bg: #ffffff;
+    --border: #d5e1ec;
+    --header-from: #2980b9;
+    --header-to: #1a5276;
+    --shadow-sm: 0 1px 3px rgba(44,62,80,0.06);
+    --shadow-md: 0 4px 12px rgba(44,62,80,0.08);
+    --shadow-lg: 0 8px 24px rgba(44,62,80,0.12);
 }
 
 /* === 2. CORE LAYOUT === */
@@ -52,7 +103,7 @@ body {
 
 /* === 3. HEADER / NAV BAR === */
 header {
-    background: linear-gradient(135deg, var(--accent) 0%, #3a4d18 100%);
+    background: linear-gradient(135deg, var(--header-from) 0%, var(--header-to) 100%);
     color: var(--header-text);
     padding: 0.6rem 1.5rem;
     position: sticky;
@@ -67,15 +118,13 @@ header {
     gap: 12px;
 }
 
-body.dark-mode header {
-    background: linear-gradient(135deg, #1e3a0e 0%, #16213e 100%);
-}
-
 .header-brand {
     display: flex;
     align-items: center;
     gap: 10px;
     min-width: 0;
+    text-decoration: none;
+    color: var(--header-text);
 }
 
 header h1 {
@@ -127,16 +176,90 @@ header p {
     background: rgba(255,255,255,0.15);
 }
 
-/* Nav link buttons (Search, Theme, Feedback) styled same as links */
+/* Nav link buttons styled same as links */
 button.header-nav-link {
     border: none;
     cursor: pointer;
     background: none;
+    font-family: inherit;
 }
 
-/* === 4. THEME TOGGLE === */
-.theme-toggle {
+/* === 4. THEME PICKER === */
+.theme-picker-wrap {
+    position: relative;
+}
+
+.theme-picker-btn {
+    color: rgba(255,255,255,0.8);
+    font-size: 1rem;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: none;
+    transition: all var(--transition);
+    line-height: 1;
+}
+
+.theme-picker-btn:hover {
+    color: #ffffff;
+    background: rgba(255,255,255,0.12);
+}
+
+.theme-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    min-width: 160px;
+    z-index: 200;
+    padding: 6px;
+}
+
+.theme-dropdown.active {
+    display: block;
+}
+
+.theme-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border: none;
+    background: none;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 6px;
+    font-family: inherit;
     font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    transition: background var(--transition);
+}
+
+.theme-option:hover {
+    background: var(--accent-light);
+}
+
+.theme-option.selected {
+    color: var(--accent);
+}
+
+.theme-swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+}
+
+.theme-option.selected .theme-swatch {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-light);
 }
 
 /* === 5. CONTENT CARDS === */
@@ -333,8 +456,11 @@ p.body-text, p.noindenta, p.imagea, p.imageb, p.imagea1 { text-align: center; }
     text-align: center;
 }
 
-body.dark-mode .is-header,
-body.dark-mode .arabic-header-block {
+/* Dim images on dark themes */
+body.theme-dark .is-header,
+body.theme-dark .arabic-header-block,
+body.theme-forest .is-header,
+body.theme-forest .arabic-header-block {
     border-radius: 6px;
     filter: brightness(0.92);
 }
@@ -402,8 +528,8 @@ ol li a:hover {
 }
 
 #scroll-top:hover {
-    background: #3a4d18;
     box-shadow: var(--shadow-lg);
+    filter: brightness(0.85);
 }
 
 /* === 16. SEARCH MODAL === */
@@ -558,7 +684,7 @@ ol li a:hover {
 }
 
 #feedback-box button[type="submit"]:hover {
-    background: #3a4d18;
+    filter: brightness(0.85);
     transform: translateY(-1px);
 }
 
@@ -577,8 +703,55 @@ ol li a:hover {
 
 .feedback-close:hover { opacity: 1; }
 
-/* === 18. SEARCH TRIGGER & FEEDBACK TRIGGER === */
-/* Search and feedback in header now use .header-action-btn */
+/* === 18. BOOK CARD (Library Landing) === */
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin: 2rem 0;
+}
+
+a.book-card,
+a.book-card:visited,
+a.book-card:link {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    text-decoration: none !important;
+    color: var(--text) !important;
+    transition: all var(--transition);
+    box-shadow: var(--shadow-sm);
+    display: block;
+}
+
+a.book-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+    color: var(--text) !important;
+}
+
+.book-card h3 {
+    margin: 0 0 0.5rem;
+    color: var(--accent);
+    font-size: 1.2rem;
+}
+
+.book-card p,
+.book-card .book-meta {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.book-card .book-meta {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    opacity: 0.5;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
 #feedback-trigger-area { display: none; }
 
@@ -724,6 +897,43 @@ a.sidebar-item {
     margin: 0.5rem 1.5rem;
 }
 
+/* Sidebar theme swatches */
+.sidebar-themes {
+    display: flex;
+    gap: 8px;
+    padding: 0.8rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.sidebar-theme-swatch {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    transition: all var(--transition);
+    padding: 0;
+}
+
+.sidebar-theme-swatch:hover {
+    transform: scale(1.15);
+}
+
+.sidebar-theme-swatch.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+.sidebar-theme-label {
+    padding: 0.5rem 1.5rem 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text);
+    opacity: 0.5;
+}
+
 /* === 21. RESPONSIVE === */
 @media (max-width: 600px) {
     .container { padding: 0 1rem; }
@@ -740,6 +950,8 @@ a.sidebar-item {
 
     .section-item a { padding: 1rem; }
     #scroll-top { bottom: 1rem; right: 1rem; width: 38px; height: 38px; }
+
+    .book-grid { grid-template-columns: 1fr; }
 }
 
 @media (min-width: 601px) {
