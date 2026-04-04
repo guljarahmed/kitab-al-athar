@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
         scrollBtn.classList.toggle('visible', scrollTop > 400);
     });
 
-    // --- Search button in header ---
+    // --- Search button in header (desktop) ---
     var header = document.querySelector('header');
     if (header) {
         var searchBtn = document.createElement('button');
@@ -61,6 +61,14 @@ document.addEventListener('DOMContentLoaded', function() {
         searchBtn.title = 'Search (Ctrl+K)';
         searchBtn.addEventListener('click', function() { openSearch(); });
         header.appendChild(searchBtn);
+
+        // --- Hamburger button (mobile) ---
+        var hamburger = document.createElement('button');
+        hamburger.className = 'hamburger-btn';
+        hamburger.innerHTML = '&#9776;';
+        hamburger.title = 'Menu';
+        hamburger.addEventListener('click', function() { openSidebar(); });
+        header.appendChild(hamburger);
     }
 
     // --- Feedback button at bottom ---
@@ -87,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Escape') {
             closeSearch();
             closeFeedback();
+            closeSidebar();
             return;
         }
 
@@ -278,4 +287,67 @@ function openFeedback() {
 
 function closeFeedback() {
     if (feedbackOverlay) feedbackOverlay.classList.remove('active');
+}
+
+// =============================================
+// 5. MOBILE SIDEBAR
+// =============================================
+var sidebarOverlay, sidebar;
+
+function createSidebar() {
+    sidebarOverlay = document.createElement('div');
+    sidebarOverlay.id = 'sidebar-overlay';
+    document.body.appendChild(sidebarOverlay);
+
+    sidebar = document.createElement('div');
+    sidebar.id = 'sidebar';
+
+    var isDark = document.body.classList.contains('dark-mode');
+
+    sidebar.innerHTML =
+        '<div class="sidebar-header">' +
+            '<h3>Menu</h3>' +
+            '<button class="sidebar-close" onclick="closeSidebar()">&times;</button>' +
+        '</div>' +
+        '<div class="sidebar-menu">' +
+            '<button class="sidebar-item" onclick="closeSidebar(); openSearch();">' +
+                '<span class="sidebar-icon">&#128269;</span>' +
+                '<span class="sidebar-label">Search</span>' +
+                '<span class="sidebar-hint">Ctrl+K</span>' +
+            '</button>' +
+            '<button class="sidebar-item" id="sidebar-theme-btn" onclick="toggleTheme(); updateSidebarTheme();">' +
+                '<span class="sidebar-icon" id="sidebar-theme-icon">' + (isDark ? '&#9728;&#65039;' : '&#127769;') + '</span>' +
+                '<span class="sidebar-label" id="sidebar-theme-label">' + (isDark ? 'Light Mode' : 'Dark Mode') + '</span>' +
+            '</button>' +
+            '<button class="sidebar-item" onclick="closeSidebar(); openFeedback();">' +
+                '<span class="sidebar-icon">&#9993;</span>' +
+                '<span class="sidebar-label">Send Feedback</span>' +
+            '</button>' +
+        '</div>';
+
+    document.body.appendChild(sidebar);
+
+    sidebarOverlay.addEventListener('click', function() {
+        closeSidebar();
+    });
+}
+
+function updateSidebarTheme() {
+    var isDark = document.body.classList.contains('dark-mode');
+    var icon = document.getElementById('sidebar-theme-icon');
+    var label = document.getElementById('sidebar-theme-label');
+    if (icon) icon.innerHTML = isDark ? '&#9728;&#65039;' : '&#127769;';
+    if (label) label.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+}
+
+function openSidebar() {
+    if (!sidebar) createSidebar();
+    updateSidebarTheme();
+    sidebarOverlay.classList.add('active');
+    sidebar.classList.add('active');
+}
+
+function closeSidebar() {
+    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+    if (sidebar) sidebar.classList.remove('active');
 }

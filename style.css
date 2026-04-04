@@ -599,22 +599,158 @@ ol li a:hover {
     padding-top: 1rem;
 }
 
-/* === 19. RESPONSIVE === */
+/* === 19. HAMBURGER MENU BUTTON (mobile only) === */
+.hamburger-btn {
+    display: none;
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: white;
+    transition: background var(--transition);
+    line-height: 1;
+}
+
+.hamburger-btn:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+/* === 20. SIDEBAR === */
+#sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 1500;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    backdrop-filter: blur(2px);
+}
+
+#sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#sidebar {
+    position: fixed;
+    top: 0;
+    right: -280px;
+    width: 280px;
+    height: 100%;
+    background: var(--card-bg);
+    z-index: 1501;
+    box-shadow: var(--shadow-lg);
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+#sidebar.active {
+    right: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sidebar-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text);
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    padding: 0;
+    line-height: 1;
+}
+
+.sidebar-close:hover { opacity: 1; }
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0.5rem 0;
+    margin: 0;
+    flex: 1;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    transition: background var(--transition);
+    font-family: inherit;
+    border-bottom: 1px solid var(--border);
+}
+
+.sidebar-item:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+.sidebar-item .sidebar-icon {
+    font-size: 1.2rem;
+    width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.sidebar-item .sidebar-label {
+    flex: 1;
+}
+
+.sidebar-item .sidebar-hint {
+    font-size: 0.7rem;
+    opacity: 0.4;
+    font-weight: 400;
+}
+
+/* === 21. RESPONSIVE === */
 @media (max-width: 600px) {
     .container { padding: 0 1rem; }
-    header { padding: 0.8rem 3.5rem; }
-    header h1 { font-size: 0.85rem; letter-spacing: 0.5px; }
+    header { padding: 0.8rem 3rem 0.8rem 1rem; }
+    header h1 { font-size: 0.9rem; letter-spacing: 0.5px; }
     header p { font-size: 0.7rem; }
-    .search-trigger { left: 0.5rem; font-size: 0.7rem; padding: 2px 6px; }
-    .theme-toggle { right: 0.5rem; padding: 2px 6px; font-size: 1rem; }
+
+    /* Hide desktop header buttons, show hamburger */
+    .search-trigger { display: none !important; }
+    .theme-toggle { display: none !important; }
+    .hamburger-btn { display: block; }
+
     .section-item a { padding: 1rem; }
     #scroll-top { bottom: 1rem; right: 1rem; width: 38px; height: 38px; }
 }
 
-@media (max-width: 380px) {
-    header { padding: 0.6rem 3rem; }
-    header h1 { font-size: 0.75rem; letter-spacing: 0; }
-    header p { display: none; }
-    .search-trigger { left: 0.3rem; font-size: 0.65rem; padding: 2px 5px; }
-    .theme-toggle { right: 0.3rem; }
+@media (min-width: 601px) {
+    #sidebar, #sidebar-overlay { display: none !important; }
+    .hamburger-btn { display: none !important; }
 }
