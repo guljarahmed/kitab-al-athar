@@ -15,7 +15,7 @@ function toggleTheme() {
 
 function updateToggleIcon(isDark) {
     var btn = document.querySelector('.theme-toggle');
-    if (btn) btn.textContent = isDark ? 'Light' : 'Dark';
+    if (btn) btn.innerHTML = isDark ? '&#9788;' : '&#9790;';
 }
 
 // =============================================
@@ -121,12 +121,6 @@ document.addEventListener('DOMContentLoaded', function() {
         searchBtn.addEventListener('click', function() { openSearch(); });
         nav.appendChild(searchBtn);
 
-        // Theme toggle (styled as nav link)
-        var themeBtn = document.createElement('button');
-        themeBtn.className = 'header-nav-link theme-toggle';
-        themeBtn.onclick = toggleTheme;
-        nav.appendChild(themeBtn);
-
         // Feedback button (styled as nav link)
         var feedbackBtn = document.createElement('button');
         feedbackBtn.className = 'header-nav-link';
@@ -134,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
         feedbackBtn.addEventListener('click', function() { openFeedback(); });
         nav.appendChild(feedbackBtn);
 
-        // Home — far right, but not on landing page
+        // Home — but not on landing page
         if (!(currentPage === 'index.html' && !prefix)) {
             var homeLink = document.createElement('a');
             homeLink.className = 'header-nav-link';
@@ -142,6 +136,12 @@ document.addEventListener('DOMContentLoaded', function() {
             homeLink.textContent = 'Home';
             nav.appendChild(homeLink);
         }
+
+        // Theme toggle — far right, icon only
+        var themeBtn = document.createElement('button');
+        themeBtn.className = 'header-nav-link theme-toggle';
+        themeBtn.onclick = toggleTheme;
+        nav.appendChild(themeBtn);
 
         header.appendChild(nav);
 
