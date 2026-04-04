@@ -50,65 +50,93 @@ body {
     padding: 0 1.5rem;
 }
 
-/* === 3. HEADER === */
+/* === 3. HEADER / NAV BAR === */
 header {
     background: linear-gradient(135deg, var(--accent) 0%, #3a4d18 100%);
     color: var(--header-text);
-    padding: 0.8rem 4.5rem;
-    text-align: center;
+    padding: 0.6rem 1.5rem;
     position: sticky;
     top: 0;
     z-index: 100;
     box-shadow: var(--shadow-md);
     border-bottom: none;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
 }
 
 body.dark-mode header {
     background: linear-gradient(135deg, #1e3a0e 0%, #16213e 100%);
 }
 
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
 header h1 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    white-space: nowrap;
 }
 
 .header-logo {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     flex-shrink: 0;
 }
 
 header p {
     margin: 2px 0 0;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     opacity: 0.85;
+}
+
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.header-nav-link {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 6px;
+    transition: all var(--transition);
+    white-space: nowrap;
+}
+
+.header-nav-link:hover {
+    color: #ffffff;
+    background: rgba(255,255,255,0.12);
+}
+
+.header-nav-link.active {
+    color: #ffffff;
+    background: rgba(255,255,255,0.15);
+}
+
+/* Nav link buttons (Search, Theme, Feedback) styled same as links */
+button.header-nav-link {
+    border: none;
+    cursor: pointer;
+    background: none;
 }
 
 /* === 4. THEME TOGGLE === */
 .theme-toggle {
-    position: absolute;
-    top: 50%;
-    right: 1.5rem;
-    transform: translateY(-50%);
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 6px;
-    padding: 4px 10px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    transition: background var(--transition);
-}
-
-.theme-toggle:hover {
-    background: rgba(255,255,255,0.25);
+    font-size: 0.85rem;
 }
 
 /* === 5. CONTENT CARDS === */
@@ -212,15 +240,7 @@ header p {
 
 /* === 8. NAVIGATION === */
 .sub-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--card-bg) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: var(--radius);
-    padding: 10px 15px;
-    margin-bottom: 2rem;
-    box-shadow: var(--shadow-sm);
+    display: none;
 }
 
 .nav-group { display: flex; gap: 10px; align-items: center; }
@@ -558,64 +578,13 @@ ol li a:hover {
 .feedback-close:hover { opacity: 1; }
 
 /* === 18. SEARCH TRIGGER & FEEDBACK TRIGGER === */
-.search-trigger {
-    position: absolute;
-    top: 50%;
-    left: 1.5rem;
-    transform: translateY(-50%);
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 6px;
-    padding: 4px 10px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: background var(--transition);
-    color: white;
-    font-family: inherit;
-}
+/* Search and feedback in header now use .header-action-btn */
 
-.search-trigger:hover {
-    background: rgba(255,255,255,0.25);
-}
-
-.feedback-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin: 2rem 0;
-    padding: 0.6rem 1.5rem;
-    background: transparent;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: all var(--transition);
-    font-family: inherit;
-}
-
-.feedback-btn:hover {
-    background: var(--accent);
-    color: white;
-}
-
-#feedback-trigger-area {
-    text-align: center;
-    border-top: 1px solid var(--border);
-    margin-top: 3rem;
-    padding-top: 1rem;
-}
+#feedback-trigger-area { display: none; }
 
 /* === 19. HAMBURGER MENU BUTTON (mobile only) === */
 .hamburger-btn {
     display: none;
-    position: absolute;
-    top: 50%;
-    right: 1rem;
-    transform: translateY(-50%);
     background: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 6px;
@@ -758,17 +727,13 @@ a.sidebar-item {
 /* === 21. RESPONSIVE === */
 @media (max-width: 600px) {
     .container { padding: 0 1rem; }
-    header { padding: 0.8rem 3.5rem; }
-    header h1 { font-size: 0.9rem; letter-spacing: 0.5px; }
-    header p { font-size: 0.7rem; }
+    header { padding: 0.5rem 0.8rem; }
+    header h1 { font-size: 0.85rem; letter-spacing: 0.5px; }
+    header p { font-size: 0.65rem; }
 
-    /* Hide desktop header buttons, show hamburger */
-    .search-trigger { display: none !important; }
-    .theme-toggle { display: none !important; }
+    /* Hide desktop header nav, show hamburger */
+    .header-nav { display: none !important; }
     .hamburger-btn { display: block; }
-
-    /* Hide bottom feedback button (sidebar has it) */
-    #feedback-trigger-area { display: none !important; }
 
     /* Hide sub-nav bar (sidebar has navigation) */
     .sub-nav { display: none !important; }

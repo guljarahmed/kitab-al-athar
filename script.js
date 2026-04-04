@@ -15,16 +15,13 @@ function toggleTheme() {
 
 function updateToggleIcon(isDark) {
     var btn = document.querySelector('.theme-toggle');
-    if (btn) btn.innerHTML = isDark ? '☀️' : '🌙';
+    if (btn) btn.textContent = isDark ? 'Light' : 'Dark';
 }
 
 // =============================================
 // 2. DOM READY: All features that need the DOM
 // =============================================
 document.addEventListener('DOMContentLoaded', function() {
-
-    // --- Theme icon sync ---
-    updateToggleIcon(document.body.classList.contains('dark-mode'));
 
     // --- Reading progress bar ---
     var progressBar = document.createElement('div');
@@ -52,44 +49,112 @@ document.addEventListener('DOMContentLoaded', function() {
         scrollBtn.classList.toggle('visible', scrollTop > 400);
     });
 
-    // --- Logo in header ---
+    // --- Restructure header as nav bar ---
     var header = document.querySelector('header');
     if (header) {
-        var logo = document.createElement('img');
-        logo.className = 'header-logo';
         var path = window.location.pathname;
         var prefix = (path.indexOf('finished_sections') !== -1) ? '../' : '';
+
+        // Wrap existing h1 (and optional p) in a brand container
+        var brand = document.createElement('div');
+        brand.className = 'header-brand';
+
+        var logo = document.createElement('img');
+        logo.className = 'header-logo';
         logo.src = prefix + 'logo.svg';
-        logo.alt = 'Kitab al-Athar';
+        logo.alt = 'Dar al-Hanafiyya';
+        brand.appendChild(logo);
+
+        var titleWrap = document.createElement('div');
         var h1 = header.querySelector('h1');
-        if (h1) h1.insertBefore(logo, h1.firstChild);
-    }
+        var subtitle = header.querySelector('p');
 
-    // --- Search button in header (desktop) ---
-    if (header) {
+        // Strip "Section N:" or "Chapter N:" prefix — brand should always just say "Dar al-Hanafiyya"
+        if (h1) {
+            var cleanTitle = h1.textContent.replace(/^(Section|Chapter)\s+\d+:\s*/i, '');
+            h1.textContent = cleanTitle;
+            titleWrap.appendChild(h1);
+        }
+        if (subtitle) titleWrap.appendChild(subtitle);
+        brand.appendChild(titleWrap);
+
+        // Remove old theme toggle button from HTML (we'll recreate it)
+        var oldToggle = header.querySelector('.theme-toggle');
+        if (oldToggle) oldToggle.remove();
+
+        // Clear header and rebuild
+        header.innerHTML = '';
+        header.appendChild(brand);
+
+        // Desktop nav links — all unified style
+        var nav = document.createElement('nav');
+        nav.className = 'header-nav';
+
+        var currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        var hasChapters = true; // Chapters link is always present
+
+        // Chapters link
+        var chaptersLink = document.createElement('a');
+        chaptersLink.className = 'header-nav-link';
+        chaptersLink.href = prefix + 'chapters.html';
+        chaptersLink.textContent = 'Chapters';
+        if (currentPage === 'chapters.html') chaptersLink.classList.add('active');
+        nav.appendChild(chaptersLink);
+
+        // Add prev/next from .sub-nav (skip Home, Chapters, Up since Chapters covers it)
+        var subNavBtns = document.querySelectorAll('.sub-nav .nav-btn');
+        for (var i = 0; i < subNavBtns.length; i++) {
+            var text = subNavBtns[i].textContent.replace('←', '').replace('→', '').trim();
+            if (text === 'Home' || text === 'Chapters' || text === 'Up') continue;
+            var link = document.createElement('a');
+            link.className = 'header-nav-link';
+            link.href = subNavBtns[i].getAttribute('href');
+            link.textContent = text;
+            nav.appendChild(link);
+        }
+
+        // Search button (styled as nav link)
         var searchBtn = document.createElement('button');
-        searchBtn.className = 'search-trigger';
+        searchBtn.className = 'header-nav-link';
         searchBtn.textContent = 'Search';
-        searchBtn.title = 'Search (Ctrl+K)';
+        searchBtn.title = 'Ctrl+K';
         searchBtn.addEventListener('click', function() { openSearch(); });
-        header.appendChild(searchBtn);
+        nav.appendChild(searchBtn);
 
-        // --- Hamburger button (mobile) ---
+        // Theme toggle (styled as nav link)
+        var themeBtn = document.createElement('button');
+        themeBtn.className = 'header-nav-link theme-toggle';
+        themeBtn.onclick = toggleTheme;
+        nav.appendChild(themeBtn);
+
+        // Feedback button (styled as nav link)
+        var feedbackBtn = document.createElement('button');
+        feedbackBtn.className = 'header-nav-link';
+        feedbackBtn.textContent = 'Feedback';
+        feedbackBtn.addEventListener('click', function() { openFeedback(); });
+        nav.appendChild(feedbackBtn);
+
+        // Home — far right, but not on landing page
+        if (!(currentPage === 'index.html' && !prefix)) {
+            var homeLink = document.createElement('a');
+            homeLink.className = 'header-nav-link';
+            homeLink.href = prefix + 'index.html';
+            homeLink.textContent = 'Home';
+            nav.appendChild(homeLink);
+        }
+
+        header.appendChild(nav);
+
+        // Hamburger button (mobile)
         var hamburger = document.createElement('button');
         hamburger.className = 'hamburger-btn';
         hamburger.innerHTML = '&#9776;';
         hamburger.title = 'Menu';
         hamburger.addEventListener('click', function() { openSidebar(); });
         header.appendChild(hamburger);
-    }
 
-    // --- Feedback button at bottom ---
-    var container = document.querySelector('.container');
-    if (container) {
-        var fbArea = document.createElement('div');
-        fbArea.id = 'feedback-trigger-area';
-        fbArea.innerHTML = '<button class="feedback-btn" onclick="openFeedback()">Send Feedback</button>';
-        container.appendChild(fbArea);
+        // Sync theme icon now that button exists
+        updateToggleIcon(document.body.classList.contains('dark-mode'));
     }
 
     // --- Keyboard navigation ---
@@ -271,7 +336,7 @@ function createFeedbackUI() {
         var email = form.querySelector('[name="email"]').value;
         var page = form.querySelector('[name="page"]').value;
 
-        var subject = encodeURIComponent('Kitab al-Athar Feedback: ' + type);
+        var subject = encodeURIComponent('Dar al-Hanafiyya Feedback: ' + type);
         var body = encodeURIComponent(
             'Type: ' + type + '\n' +
             'Page: ' + page + '\n' +
@@ -279,7 +344,7 @@ function createFeedbackUI() {
             message
         );
 
-        window.location.href = 'mailto:feedback@kitabalathar.com?subject=' + subject + '&body=' + body;
+        window.location.href = 'mailto:feedback@daralhanafiyya.com?subject=' + subject + '&body=' + body;
 
         // Show confirmation
         form.innerHTML = '<div style="text-align:center;padding:2rem 0;">' +
